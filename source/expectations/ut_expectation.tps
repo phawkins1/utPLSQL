@@ -168,7 +168,23 @@ create or replace type ut_expectation authid current_user as object(
   member procedure to_contain(self in ut_expectation, a_expected sys_refcursor),
   member procedure not_to_contain(self in ut_expectation, a_expected sys_refcursor),
   member procedure to_contain(self in ut_expectation, a_expected anydata),
-  member procedure not_to_contain(self in ut_expectation, a_expected anydata)
+  member procedure not_to_contain(self in ut_expectation, a_expected anydata),
+  
+  member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected date),
+  member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected dsinterval_unconstrained),
+  member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected number),
+  member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_unconstrained),
+  member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_ltz_unconstrained),
+  member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_tz_unconstrained),
+  member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected yminterval_unconstrained),
+  
+  member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected date),
+  member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected dsinterval_unconstrained),
+  member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected number),
+  member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_unconstrained),
+  member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_ltz_unconstrained),
+  member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_tz_unconstrained),
+  member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected yminterval_unconstrained)
   
 )
 not final
