@@ -19,7 +19,7 @@ create or replace type body ut_coverage_reporter_base is
   overriding final member procedure before_calling_run(self in out nocopy ut_coverage_reporter_base, a_run ut_run) as
   begin
     (self as ut_output_reporter_base).before_calling_run(a_run);
-    ut_coverage.coverage_start(a_coverage_options => a_run.coverage_options);
+    ut_coverage.coverage_start(a_coverage_run_id => a_run.coverage_options.coverage_run_id);
   end;
 
   overriding final member procedure before_calling_before_all(self in out nocopy ut_coverage_reporter_base, a_executable in ut_executable) is
@@ -83,6 +83,23 @@ create or replace type body ut_coverage_reporter_base is
   overriding final member procedure after_calling_after_all (self in out nocopy ut_coverage_reporter_base, a_executable in ut_executable) is
   begin
       ut_coverage.coverage_pause();
+  end;
+
+  final member function get_report( a_coverage_options ut_coverage_options ) return ut_output_data_rows pipelined is
+    reporter ut_coverage_reporter_base := self;
+  begin
+    reporter.after_calling_run( ut_run( a_coverage_options => a_coverage_options ) );
+
+    for i in (select value(x) val from table(self.output_buffer.get_lines(1, 1)) x ) loop
+      pipe row (i.val);
+    end loop;
+  end;
+
+  final member function get_report_cursor( a_coverage_options ut_coverage_options ) return sys_refcursor is
+    reporter ut_coverage_reporter_base := self;
+  begin
+    reporter.after_calling_run( ut_run( a_coverage_options => a_coverage_options ) );
+    return self.output_buffer.get_lines_cursor(1, 1);
   end;
 
 end;

@@ -133,6 +133,7 @@ grant execute on &&ut3_owner..ut_suite_cache_rows to &ut3_user;
 grant select, insert, delete, update on &&ut3_owner..dbmspcc_blocks to &ut3_user;
 grant select, insert, delete, update on &&ut3_owner..dbmspcc_runs   to &ut3_user;
 grant select, insert, delete, update on &&ut3_owner..dbmspcc_units  to &ut3_user;
+grant select  on &&ut3_owner..ut_coverage_runs   to &ut3_user;
 grant execute on &&ut3_owner..ut_matcher_options to &ut3_user;
 grant execute on &&ut3_owner..ut_matcher_options_items to &ut3_user;
 

@@ -1,6 +1,6 @@
 create or replace package body coverage_helper is
 
-  g_run_ids         ut3_develop.ut_coverage.tt_coverage_id_arr;
+  g_coverage_run_id raw(32);
   g_profiler_run_id integer;
   g_block_run_id    integer;
 
@@ -20,19 +20,12 @@ create or replace package body coverage_helper is
     return v_result;
   end;
 
-  procedure setup_mock_coverage_ids(a_profiler_run_id integer, a_block_run_id integer) is
-    l_coverage_ids ut3_develop.ut_coverage.tt_coverage_id_arr;
-  begin
-    l_coverage_ids(ut3_develop.ut_coverage.gc_proftab_coverage) := a_profiler_run_id;
-    l_coverage_ids(ut3_develop.ut_coverage.gc_block_coverage)   := a_block_run_id;
-    ut3_develop.ut_coverage.mock_coverage_id(l_coverage_ids);
-  end;
-
   procedure setup_mock_coverage_id is
   begin
+    g_coverage_run_id := sys_guid();
     g_profiler_run_id := get_mock_proftab_run_id();
     g_block_run_id    := get_mock_block_run_id();
-    setup_mock_coverage_ids(g_profiler_run_id, g_block_run_id);
+    ut3_develop.ut_coverage.mock_coverage_id(g_coverage_run_id, g_profiler_run_id, g_block_run_id);
   end;
 
   procedure setup_dummy_coverage is
@@ -42,10 +35,7 @@ create or replace package body coverage_helper is
     create_dummy_12_2_cov_test();
     grant_exec_on_12_2_cov();
 
-    g_profiler_run_id := get_mock_proftab_run_id();
-    g_block_run_id    := get_mock_block_run_id();
-    setup_mock_coverage_ids(g_profiler_run_id, g_block_run_id);
-
+    setup_mock_coverage_id();
     mock_block_coverage_data(g_block_run_id, user);
     mock_profiler_coverage_data(g_profiler_run_id, user);
     commit;
@@ -66,33 +56,22 @@ create or replace package body coverage_helper is
     select g_profiler_run_id, c_unit_id,     7,           1, 1  from dual;
   end;
 
-  procedure cleanup_dummy_coverage(a_run_id in integer) is
-    pragma autonomous_transaction;
-  begin
-    delete from ut3_develop.plsql_profiler_data where runid = a_run_id;
-    delete from ut3_develop.plsql_profiler_units where runid = a_run_id;
-    delete from ut3_develop.plsql_profiler_runs where runid = a_run_id;
-    commit;
-  end;
-
-  procedure cleanup_dummy_coverage(a_block_id in integer, a_prof_id in integer) is
+  procedure cleanup_dummy_coverage is
     pragma autonomous_transaction;
   begin
     begin execute immediate q'[drop package ut3_develop.test_block_dummy_coverage]'; exception when others then null; end;
     begin execute immediate q'[drop package ut3_develop.dummy_coverage_package_with_an_amazingly_long_name_that_you_would_not_think_of_in_real_life_project_because_its_simply_too_long]'; exception when others then null; end;
-    delete from dbmspcc_blocks where run_id = a_block_id;
-    delete from dbmspcc_units where run_id = a_block_id;
-    delete from dbmspcc_runs where run_id = a_block_id;
-    cleanup_dummy_coverage(a_prof_id);
+    delete from ut3_develop.ut_coverage_runs where coverage_run_id = g_coverage_run_id;
+    delete from dbmspcc_blocks where run_id = g_block_run_id;
+    delete from dbmspcc_units where run_id = g_block_run_id;
+    delete from dbmspcc_runs where run_id = g_block_run_id;
+    delete from ut3_develop.plsql_profiler_data where runid = g_profiler_run_id;
+    delete from ut3_develop.plsql_profiler_units where runid = g_profiler_run_id;
+    delete from ut3_develop.plsql_profiler_runs where runid = g_profiler_run_id;
+    g_coverage_run_id := null;
+    g_profiler_run_id := null;
+    g_block_run_id := null;
     commit;
-  end;
-
-  procedure cleanup_dummy_coverage is
-  begin
-    cleanup_dummy_coverage(
-      g_block_run_id,
-      g_profiler_run_id
-    );
   end;
 
   procedure create_dummy_coverage_package is
