@@ -16,24 +16,29 @@ create or replace type ut_be_within under ut_comparison_matcher(
   limitations under the License.
   */
   a_amt number,  
+  a_pct number(1,0),
+
   
-  member procedure init(self in out nocopy ut_be_within, a_amt number,  a_expected ut_data_value),
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected number)
+  member procedure init(self in out nocopy ut_be_within, a_amt number, a_pct number, a_expected ut_data_value),
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected number)
     return self as result,
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected date)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number)
+    return self as result,    
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected date)
     return self as result,
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected timestamp_unconstrained)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected timestamp_unconstrained)
     return self as result,
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected timestamp_tz_unconstrained)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected timestamp_tz_unconstrained)
     return self as result,
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected timestamp_ltz_unconstrained)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected timestamp_ltz_unconstrained)
     return self as result,
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected yminterval_unconstrained)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected yminterval_unconstrained)
     return self as result,
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected dsinterval_unconstrained)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected dsinterval_unconstrained)
     return self as result,   
     
   overriding member function run_matcher(self in out nocopy ut_be_within, a_actual ut_data_value) return boolean,
   overriding member function failure_message(a_actual ut_data_value) return varchar2,
   overriding member function failure_message_when_negated(a_actual ut_data_value) return varchar2
-)
+);
+/

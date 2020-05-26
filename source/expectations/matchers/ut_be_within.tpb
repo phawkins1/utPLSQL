@@ -16,59 +16,60 @@ create or replace type body ut_be_within is
   limitations under the License.
   */
 
-  member procedure init(self in out nocopy ut_be_within, a_amt number, a_expected ut_data_value) is
+  member procedure init(self in out nocopy ut_be_within, a_amt number, a_pct number, a_expected ut_data_value) is
   begin
     self.self_type       := $$plsql_unit;
     self.a_amt     := a_amt;
+    self.a_pct     := a_pct;
     self.expected  := a_expected;
   end;
 
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected number)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected number)
     return self as result is
   begin
-    init(a_amt, ut_data_value_number(a_expected));
+    init(a_amt,a_pct, ut_data_value_number(a_expected));
     return;
   end;
   
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected date)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected date)
     return self as result is
   begin
-    init(a_amt, ut_data_value_date(a_expected));
+    init(a_amt,a_pct, ut_data_value_date(a_expected));
     return;
   end;
   
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected timestamp_unconstrained)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected timestamp_unconstrained)
     return self as result is
   begin
-    init(a_amt, ut_data_value_timestamp(a_expected));
+    init(a_amt,a_pct, ut_data_value_timestamp(a_expected));
     return;
   end;
   
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected timestamp_tz_unconstrained)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected timestamp_tz_unconstrained)
     return self as result is
   begin
-    init(a_amt, ut_data_value_timestamp_tz(a_expected));
+    init(a_amt,a_pct, ut_data_value_timestamp_tz(a_expected));
     return;
   end;
   
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected timestamp_ltz_unconstrained)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected timestamp_ltz_unconstrained)
     return self as result is
   begin
-    init(a_amt, ut_data_value_timestamp_ltz(a_expected));
+    init(a_amt,a_pct, ut_data_value_timestamp_ltz(a_expected));
     return;
   end;
   
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected yminterval_unconstrained)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected yminterval_unconstrained)
     return self as result is
   begin
-    init(a_amt, ut_data_value_yminterval(a_expected));
+    init(a_amt,a_pct, ut_data_value_yminterval(a_expected));
     return;
   end;
 
-  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number, a_expected dsinterval_unconstrained)
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected dsinterval_unconstrained)
     return self as result is
   begin
-    init(a_amt, ut_data_value_dsinterval(a_expected));
+    init(a_amt,a_pct, ut_data_value_dsinterval(a_expected));
     return;
   end;
   
@@ -77,7 +78,11 @@ create or replace type body ut_be_within is
   begin
     if (self.expected.data_type = a_actual.data_type) then
       if a_actual is of (ut_data_value_number) then
-        l_result := abs(self.a_amt) >= treat(expected as ut_data_value_number).data_value - treat(a_actual as ut_data_value_number).data_value;
+        if a_pct = 0 then
+          l_result := abs(self.a_amt) >= treat(expected as ut_data_value_number).data_value - treat(a_actual as ut_data_value_number).data_value;
+        else 
+          l_result := abs(self.a_amt) <= 100 - ((treat(a_actual as ut_data_value_number).data_value * 100 ) / treat(expected as ut_data_value_number).data_value ) ;
+        end if;
       elsif a_actual is of (ut_data_value_date) then
         l_result := abs(self.a_amt) >= treat(expected as ut_data_value_date).data_value - treat(a_actual as ut_data_value_date).data_value;
       elsif a_actual is of (ut_data_value_timestamp) then
@@ -97,7 +102,7 @@ create or replace type body ut_be_within is
 
   overriding member function failure_message(a_actual ut_data_value) return varchar2 is
   begin
-    return (self as ut_matcher).failure_message(a_actual)|| ' absolute distance of '|| self.a_amt|| ' from '||expected.to_string_report();
+    return (self as ut_matcher).failure_message(a_actual)|| case when a_pct = 0 then ' absolute distance of '||self.a_amt  else ' '|| self.a_amt|| ' percent'  end || ' from '||expected.to_string_report();
   end;
 
   overriding member function failure_message_when_negated(a_actual ut_data_value) return varchar2 is

@@ -184,7 +184,10 @@ create or replace type ut_expectation authid current_user as object(
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_unconstrained),
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_ltz_unconstrained),
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_tz_unconstrained),
-  member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected yminterval_unconstrained)
+  member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected yminterval_unconstrained),
+  
+  member procedure not_to_be_within_pct(self in ut_expectation, a_amt  number, a_expected number)
+
   
 )
 not final

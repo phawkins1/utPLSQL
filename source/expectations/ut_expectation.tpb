@@ -721,73 +721,82 @@ create or replace type body ut_expectation as
 
   member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected date) is 
   begin
-    self.to_( ut_be_within(a_amt,a_expected) );
+    self.to_( ut_be_within(a_amt,0,a_expected) );
   end;
 
   member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected dsinterval_unconstrained) is 
   begin
-    self.to_( ut_be_within(a_amt,a_expected) );
+    self.to_( ut_be_within(a_amt,0,a_expected) );
   end;
 
   member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_unconstrained) is 
   begin
-    self.to_( ut_be_within(a_amt,a_expected) );
+    self.to_( ut_be_within(a_amt,0,a_expected) );
   end;  
   
   member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_ltz_unconstrained) is 
   begin
-    self.to_( ut_be_within(a_amt,a_expected) );
+    self.to_( ut_be_within(a_amt,0,a_expected) );
   end;  
   
   member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_tz_unconstrained) is 
   begin
-    self.to_( ut_be_within(a_amt,a_expected) );
+    self.to_( ut_be_within(a_amt,0,a_expected) );
   end;
   
   member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected yminterval_unconstrained) is
   begin
-    self.to_( ut_be_within(a_amt,a_expected) );
+    self.to_( ut_be_within(a_amt,0,a_expected) );
   end;
   
   member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected  number) is 
   begin
-    self.to_( ut_be_within(a_amt,a_expected) );
+    self.to_( ut_be_within(a_amt,0,a_expected) );
   end;
   
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected date) is
   begin
-    self.not_to( ut_be_within(a_amt,a_expected) );
+    self.not_to( ut_be_within(a_amt,0,a_expected) );
   end;
   
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected dsinterval_unconstrained) is
   begin
-    self.not_to( ut_be_within(a_amt,a_expected) );
+    self.not_to( ut_be_within(a_amt,0,a_expected) );
   end;
   
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected  number) is
   begin
-    self.not_to( ut_be_within(a_amt,a_expected) );
+    self.not_to( ut_be_within(a_amt,0,a_expected) );
   end;
   
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_unconstrained) is
   begin
-    self.not_to( ut_be_within(a_amt,a_expected) );
+    self.not_to( ut_be_within(a_amt,0,a_expected) );
   end;
   
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_ltz_unconstrained) is
   begin
-    self.not_to( ut_be_within(a_amt,a_expected) );
+    self.not_to( ut_be_within(a_amt,0,a_expected) );
   end;
   
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_tz_unconstrained) is
   begin
-    self.not_to( ut_be_within(a_amt,a_expected) );
+    self.not_to( ut_be_within(a_amt,0,a_expected) );
   end;
   
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected yminterval_unconstrained) is
   begin
-    self.not_to( ut_be_within(a_amt,a_expected) );
+    self.not_to( ut_be_within(a_amt,0,a_expected) );
+
+  member procedure to_be_within_pct(self in ut_expectation, a_amt  number, a_expected  number) is 
+  begin
+    self.to_( ut_be_within(a_amt,1,a_expected) );
   end;  
+  
+  member procedure not_to_be_within_pct(self in ut_expectation, a_amt  number, a_expected  number) is
+  begin
+    self.not_to( ut_be_within(a_amt,1,a_expected) );
+  end;
   
 end;
 /
