@@ -15,6 +15,14 @@ create or replace type body ut_expectation as
   See the License for the specific language governing permissions and
   limitations under the License.
   */
+  
+  constructor function ut_expectation(self in out nocopy ut_expectation, a_actual_data ut_data_value, a_description varchar2) return self as result is
+  begin
+    self.actual_data := a_actual_data;
+    self.description := a_description;
+    return;
+  end;  
+  
   member procedure to_(self in ut_expectation, a_matcher ut_matcher) is
     l_expectation_result boolean;
     l_matcher       ut_matcher := a_matcher;
@@ -787,7 +795,8 @@ create or replace type body ut_expectation as
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected yminterval_unconstrained) is
   begin
     self.not_to( ut_be_within(a_amt,0,a_expected) );
-
+  end;  
+  
   member procedure to_be_within_pct(self in ut_expectation, a_amt  number, a_expected  number) is 
   begin
     self.to_( ut_be_within(a_amt,1,a_expected) );
@@ -797,6 +806,26 @@ create or replace type body ut_expectation as
   begin
     self.not_to( ut_be_within(a_amt,1,a_expected) );
   end;
+
+  member function to_be_within(a_amt  number) return ut_expectation is
+    l_result ut_expectation := self;
+  begin
+    l_result.matcher := ut_be_within(a_amt);
+    return l_result;
+  end;
+  
+  member function  of_(self in ut_expectation,a_expected number) return ut_expectation is
+    l_result ut_expectation;
+  begin
+    l_result := self;
+    l_result.matcher := treat(l_result.matcher as ut_be_within).of_(a_expected);
+    return l_result;
+  end;
+  
+  member procedure of_(self in ut_expectation,a_expected number) is
+  begin
+    self.to_( treat(matcher as ut_be_within).of_(a_expected));
+  end;   
   
 end;
 /

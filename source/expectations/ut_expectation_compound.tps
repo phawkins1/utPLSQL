@@ -15,7 +15,6 @@ create or replace type ut_expectation_compound force under ut_expectation(
   See the License for the specific language governing permissions and
   limitations under the License.
   */
-  matcher             ut_matcher,
 
   constructor function ut_expectation_compound(self in out nocopy ut_expectation_compound, a_actual_data ut_data_value, a_description varchar2) return self as result,
 

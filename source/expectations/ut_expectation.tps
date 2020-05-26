@@ -17,7 +17,10 @@ create or replace type ut_expectation authid current_user as object(
   */
   actual_data         ut_data_value,
   description         varchar2(4000 char),
-
+  matcher             ut_matcher,
+  
+  constructor function ut_expectation(self in out nocopy ut_expectation, a_actual_data ut_data_value, a_description varchar2) return self as result,
+  
   --base matcher executors
   member procedure to_(self in ut_expectation, a_matcher ut_matcher),
   member procedure not_to(self in ut_expectation, a_matcher ut_matcher),
@@ -178,6 +181,8 @@ create or replace type ut_expectation authid current_user as object(
   member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_tz_unconstrained),
   member procedure to_be_within(self in ut_expectation, a_amt  number, a_expected yminterval_unconstrained),
   
+  member procedure to_be_within_pct(self in ut_expectation, a_amt  number, a_expected number), 
+  
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected date),
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected dsinterval_unconstrained),
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected number),
@@ -186,8 +191,11 @@ create or replace type ut_expectation authid current_user as object(
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected timestamp_tz_unconstrained),
   member procedure not_to_be_within(self in ut_expectation, a_amt  number, a_expected yminterval_unconstrained),
   
-  member procedure not_to_be_within_pct(self in ut_expectation, a_amt  number, a_expected number)
+  member procedure not_to_be_within_pct(self in ut_expectation, a_amt  number, a_expected number),
 
+  member function to_be_within(a_amt  number) return ut_expectation,
+  member function  of_(self in ut_expectation,a_expected number) return ut_expectation,
+  member procedure of_(self in ut_expectation,a_expected number)  
   
 )
 not final

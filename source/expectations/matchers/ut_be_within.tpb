@@ -31,6 +31,13 @@ create or replace type body ut_be_within is
     return;
   end;
   
+  constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number)
+    return self as result is
+  begin
+    self.a_amt     := a_amt;
+    return;
+  end;  
+  
   constructor function ut_be_within(self in out nocopy ut_be_within, a_amt number,a_pct number := 0, a_expected date)
     return self as result is
   begin
@@ -97,6 +104,13 @@ create or replace type body ut_be_within is
     else
       l_result := (self as ut_matcher).run_matcher(a_actual);
     end if;      
+    return l_result;
+  end;
+
+  member function of_(a_expected number) return ut_be_within is
+    l_result ut_be_within := self;
+  begin
+    l_result.expected := ut_data_value_number(a_expected);
     return l_result;
   end;
 
